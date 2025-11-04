@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"  # Changed to 8080 to avoid conflicts with port 80
+    depends_on:
+      - backend
+    # No environment variables needed for frontend (it's just HTML)
+
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - database
+    environment:
+      # Backend environment variables (from ConfigMap/Secret)
+      MONGO_URI: mongodb://database:27017/userdb
+      API_KEY: my-secret-api-key-12345
+      APP_NAME: "User Management System"
+      APP_VERSION: "1.0.0"
+      ENVIRONMENT: "development"
+      MAX_USERS: "100"
+      DEFAULT_ROLE: "user"
+      PORT: "3000"
+
+  database:
+    image: mongo:7.0
+    ports:
+      - "27017:27017"  # Expose MongoDB port
+    environment:
+      MONGO_INITDB_DATABASE: userdb
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:

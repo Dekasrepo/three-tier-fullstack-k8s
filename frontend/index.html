@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #1e3c72;
+            margin-bottom: 10px;
+        }
+
+        .header .app-info {
+            color: #666;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .config-display {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .config-display h2 {
+            color: #1e3c72;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .config-item {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #1e3c72;
+        }
+
+        .config-item .label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .config-item .value {
+            font-size: 16px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card h2 {
+            color: #1e3c72;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #555;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #1e3c72;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #1e3c72;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #2a5298;
+        }
+
+        .user-list {
+            margin-top: 20px;
+        }
+
+        .user-item {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .user-email {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .user-role {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .role-admin {
+            background: #ff9800;
+            color: white;
+        }
+
+        .role-user {
+            background: #4caf50;
+            color: white;
+        }
+
+        .role-guest {
+            background: #9e9e9e;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            width: auto;
+        }
+
+        .delete-btn:hover {
+            background: #d32f2f;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #1e3c72;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 User Management System</h1>
+            <p>Kubernetes Demo Application</p>
+            <div class="app-info">
+                <strong>Environment:</strong> <span id="envName">Production</span> | 
+                <strong>Version:</strong> <span id="appVersion">1.0.0</span>
+            </div>
+        </div>
+
+        <div class="config-display">
+            <h2>📋 Configuration (from ConfigMap & Environment)</h2>
+            <div class="config-grid">
+                <div class="config-item">
+                    <div class="label">App Name</div>
+                    <div class="value" id="configAppName">Loading...</div>
+                </div>
+                <div class="config-item">
+                    <div class="label">Max Users</div>
+                    <div class="value" id="configMaxUsers">Loading...</div>
+                </div>
+                <div class="config-item">
+                    <div class="label">Default Role</div>
+                    <div class="value" id="configDefaultRole">Loading...</div>
+                </div>
+                <div class="config-item">
+                    <div class="label">API Endpoint</div>
+                    <div class="value" id="configApiEndpoint">Loading...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalUsers">0</div>
+                <div class="stat-label">Total Users</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="adminCount">0</div>
+                <div class="stat-label">Administrators</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="activeUsers">0</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="card">
+                <h2>➕ Add New User</h2>
+                <form id="userForm">
+                    <div class="form-group">
+                        <label for="userName">Full Name</label>
+                        <input type="text" id="userName" placeholder="Enter full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userEmail">Email Address</label>
+                        <input type="email" id="userEmail" placeholder="Enter email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userRole">Role</label>
+                        <select id="userRole" required>
+                            <option value="user">User</option>
+                            <option value="admin">Administrator</option>
+                            <option value="guest">Guest</option>
+                        </select>
+                    </div>
+                    <button type="submit">Add User</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>👥 User List</h2>
+                <div class="user-list" id="userList">
+                    <p style="text-align: center; color: #999;">No users yet. Add your first user!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulated config values (in real app, these would come from environment variables)
+        const config = {
+            appName: 'User Management System',
+            maxUsers: '100',
+            defaultRole: 'user',
+            apiEndpoint: 'https://api.example.com/v1'
+        };
+
+        let users = [];
+
+        // Initialize app
+        function init() {
+            loadConfig();
+            loadUsers();
+            updateStats();
+        }
+
+        // Load configuration
+        function loadConfig() {
+            document.getElementById('configAppName').textContent = config.appName;
+            document.getElementById('configMaxUsers').textContent = config.maxUsers;
+            document.getElementById('configDefaultRole').textContent = config.defaultRole;
+            document.getElementById('configApiEndpoint').textContent = config.apiEndpoint;
+        }
+
+        // Load users from memory
+        function loadUsers() {
+            const userList = document.getElementById('userList');
+            
+            if (users.length === 0) {
+                userList.innerHTML = '<p style="text-align: center; color: #999;">No users yet. Add your first user!</p>';
+                return;
+            }
+
+            userList.innerHTML = users.map((user, index) => `
+                <div class="user-item">
+                    <div class="user-info">
+                        <div class="user-name">${user.name}</div>
+                        <div class="user-email">${user.email}</div>
+                    </div>
+                    <div>
+                        <span class="user-role role-${user.role}">${user.role.toUpperCase()}</span>
+                        <button class="delete-btn" onclick="deleteUser(${index})">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Update statistics
+        function updateStats() {
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('adminCount').textContent = users.filter(u => u.role === 'admin').length;
+            document.getElementById('activeUsers').textContent = users.filter(u => u.role !== 'guest').length;
+        }
+
+        // Add user
+        document.getElementById('userForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('userName').value;
+            const email = document.getElementById('userEmail').value;
+            const role = document.getElementById('userRole').value;
+
+            if (users.length >= parseInt(config.maxUsers)) {
+                alert(`Maximum users limit (${config.maxUsers}) reached!`);
+                return;
+            }
+
+            users.push({ name, email, role });
+            
+            loadUsers();
+            updateStats();
+            
+            this.reset();
+        });
+
+        // Delete user
+        function deleteUser(index) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                users.splice(index, 1);
+                loadUsers();
+                updateStats();
+            }
+        }
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>

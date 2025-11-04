@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  namespace: user-app
+  labels:
+    app: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: njidekadocker/userapp.backend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+          name: http
+        
+        # Environment variables from ConfigMap
+        env:
+        - name: APP_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: user-app-config
+              key: APP_NAME
+        - name: APP_VERSION
+          valueFrom:
+            configMapKeyRef:
+              name: user-app-config
+              key: APP_VERSION
+        - name: ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: user-app-config
+              key: ENVIRONMENT
+        - name: MAX_USERS
+          valueFrom:
+            configMapKeyRef:
+              name: user-app-config
+              key: MAX_USERS
+        - name: DEFAULT_ROLE
+          valueFrom:
+            configMapKeyRef:
+              name: user-app-config
+              key: DEFAULT_ROLE
+        
+        # Environment variables from Secret
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: user-app-secret
+              key: DB_PASSWORD
+        - name: API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: user-app-secret
+              key: API_KEY
+        - name: MONGO_URI
+          valueFrom:
+            secretKeyRef:
+              name: user-app-secret
+              key: MONGO_URI
+        - name: PORT
+          value: "3000"
+        
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        
+        # Health checks
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 10
+          periodSeconds: 5

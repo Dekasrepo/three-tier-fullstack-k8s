@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: user-app-ingress
+  namespace: user-app
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"   # Redirect HTTP → HTTPS
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - jideka.com.ng
+      secretName: user-app-tls-secret   # <-- TLS secret name
+  rules:
+    - host: jideka.com.ng
+      http:
+        paths:
+          # Backend API routes
+          - path: /api(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: backend-service
+                port:
+                  number: 3000
+
+          # Frontend routes (catch-all)
+          - path: /()(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80
