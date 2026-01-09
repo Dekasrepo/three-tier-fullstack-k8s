@@ -11,7 +11,6 @@ A complete full-stack application demonstrating all major Kubernetes components,
 - Detailed Setup
 - Kubernetes Components
 - TLS/HTTPS Setup
-- Testing
 - Troubleshooting
 - Contributing
 - License
